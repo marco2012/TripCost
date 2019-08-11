@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 
 void main() => runApp(new MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -147,12 +150,27 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
 
+    //statusbar color https://stackoverflow.com/questions/52489458/how-to-change-status-bar-color-in-flutter
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: defaultColor
+    ));
+    
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("TripCost"),
-        backgroundColor: defaultColor,
-      ),
+        appBar: AppBar(
+            title: Text("TripCost"),
+            backgroundColor: defaultColor,
+
+        ),
       body: new Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [
+                    Color(0xFF1b1e44),
+                    Color(0xFF2d3447),
+                  ],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  tileMode: TileMode.clamp)),
           padding: new EdgeInsets.all(20.0),
           child: new Form(
             key: this._formKey,
@@ -172,6 +190,7 @@ class _LoginPageState extends State<LoginPage> {
                       border: new OutlineInputBorder(
                         borderRadius: new BorderRadius.circular(25.0),
                         borderSide: new BorderSide(),
+
                       ),
                     ),
                     onSaved: (value) {
@@ -235,26 +254,43 @@ class _LoginPageState extends State<LoginPage> {
                       this._data.fuel_price = fuelPriceController.numberValue;
                     }),
 
-                new Container(
+                  new Padding(padding: EdgeInsets.only(top: paddingSize)),
+
+                  new Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+
+                      Text("Roundtrip",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                          letterSpacing: 1.0,
+                      )),
+
+                    new CupertinoSwitch(
+                        activeColor: defaultColor,
+                        value: this._data.roundtrip,
+                        onChanged: (bool val) =>
+                            setState(() => this._data.roundtrip = val),
+
+                    )
+
+                  ],
+
+                  ),
+
+                  new Padding(padding: EdgeInsets.only(top: paddingSize)),
+
+
+                  new Container(
                   width: screenSize.width,
-                  child: new SwitchListTile(
-                      activeColor: defaultColor,
-                      title: const Text('Roundtrip'),
-                      value: this._data.roundtrip,
-                      onChanged: (bool val) =>
-                          setState(() => this._data.roundtrip = val)),
-                  margin: new EdgeInsets.only(top: 20.0),
-                ),
-                new Container(
-                  width: screenSize.width,
-                  child: new RaisedButton(
+                  child: new CupertinoButton(
                     child: new Text(
                       'Calculate',
                       style: new TextStyle(color: Colors.white),
                     ),
                     onPressed: this.submit,
                     color: defaultColor,
-                      shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
 
                   ),
                   margin: new EdgeInsets.only(top: 20.0),
@@ -262,6 +298,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
 
                 new Padding(padding: EdgeInsets.only(top: 2*paddingSize)),
+
 
                 new Container(
                   width: screenSize.width,
