@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(new MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -49,23 +51,73 @@ class _LoginPageState extends State<LoginPage> {
       decimalSeparator: '.',
       thousandSeparator: ','); //before
 
+  SharedPreferences sharedPreferences;
+
   @override
   void initState() {
     super.initState();
 
     // Start listening to changes.
     l100kmController.addListener(calculateKml);
-    kmlController.addListener(calculatel100km);
+    //kmlController.addListener(calculatel100km);
 
-    fuelPriceController.text = "1.50";
+    SharedPreferences.getInstance().then((SharedPreferences sp) { //https://stackoverflow.com/a/49958340/1440037
+      sharedPreferences = sp;
+
+      if (sharedPreferences.getDouble('l100km') == null) {
+        sharedPreferences?.setDouble('l100km', 1.0);
+      } else {
+        l100kmController.text = sharedPreferences.getDouble('l100km').toStringAsFixed(2);
+      }
+      if (sharedPreferences.getDouble('kml') == null) {
+        sharedPreferences?.setDouble('kml', 0.0);
+      } else {
+        kmlController.text = sharedPreferences.getDouble('kml').toStringAsFixed(2);
+      }
+      if (sharedPreferences.getDouble('fuel_price') == null) {
+        sharedPreferences?.setDouble('fuel_price', 1.0);
+      } else {
+        fuelPriceController.text = sharedPreferences?.getDouble('fuel_price').toString();
+      }
+
+      setState(() {});
+    });
+
+
   }
+
 
   void submit() {
     FocusScope.of(context).requestFocus(new FocusNode());
 
+    if (l100kmController.text.isEmpty && kmlController.text.isEmpty) {
+      Alert(context: context, title: "Error", desc: "Insert either L/100Km or Km/L.",buttons: [
+        DialogButton(
+          child: Text(
+            "Ok",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.teal,
+          radius: BorderRadius.circular(8.0),
+        ),
+      ]).show();
+      return null;
+    }
+
     // First validate form.
     if (this._formKey.currentState.validate()) {
       _formKey.currentState.save(); // Save our form now.
+
+      print('l100km: ${_data.l100km}');
+      print(_data.kml);
+      print(_data.fuel_price);
+
+      l100kmController.text = (100/_data.kml).toStringAsFixed(2) ;
+
+      sharedPreferences?.setDouble('l100km', _data.l100km);
+      sharedPreferences?.setDouble('kml',  _data.kml);
+      sharedPreferences?.setDouble('fuel_price', _data.fuel_price);
 
       var distance = _data.distance;
       if (_data.roundtrip) {
@@ -76,19 +128,19 @@ class _LoginPageState extends State<LoginPage> {
           ((distance * _data.fuel_price) / _data.kml).toStringAsFixed(2);
 
       tripCostController.text = price;
-      print('Price: ${price}');
+      print('Price: $price');
     }
   }
 
   void calculateKml() {
-    var kml = 100 / double.parse(l100kmController.text);
-    kmlController.text = kml.toStringAsFixed(2);
-    this._data.kml = kml;
-  }
+    if (l100kmController.text.isEmpty) {
+      this._data.kml = 0.0;
+    } else {
+      var kml = 100 / double.parse(l100kmController.text);
+      kmlController.text = kml.toStringAsFixed(2);
+      this._data.kml = kml;
+    }
 
-  void calculatel100km() {
-    //var l100km = 100 / double.parse(kmlController.text);
-    //l100kmController.text = l100km.toStringAsFixed(2);
   }
 
   @override
@@ -112,7 +164,7 @@ class _LoginPageState extends State<LoginPage> {
                 new TextFormField(
                     controller: distanceController,
                     keyboardType: TextInputType
-                        .number, // Use email input type for emails.
+                        .number,
                     decoration: new InputDecoration(
                       hintText: 'Distance in Km',
                       labelText: 'Distance',
@@ -130,6 +182,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 new TextFormField(
                     controller: l100kmController,
+
                     keyboardType: TextInputType
                         .number, // Use email input type for emails.
                     decoration: new InputDecoration(
@@ -141,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     onSaved: (value) {
-
+                      this._data.l100km = l100kmController.text.isNotEmpty ? num.tryParse(value).toDouble() : 1.0;
                     }),
 
                 new Padding(padding: EdgeInsets.only(top: paddingSize)),
@@ -160,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     onSaved: (value) {
-                      this._data.kml = num.tryParse(value).toDouble();
+                      this._data.kml = kmlController.text.isNotEmpty ? num.tryParse(value).toDouble() : 1.0;
                     }),
 
                 new Padding(padding: EdgeInsets.only(top: paddingSize)),
