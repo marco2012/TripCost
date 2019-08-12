@@ -52,7 +52,8 @@ class _LoginPageState extends State<LoginPage> {
   final fuelPriceController = MoneyMaskedTextController(
       leftSymbol: '\€ ',
       decimalSeparator: '.',
-      thousandSeparator: ','); //before
+      thousandSeparator: ',',
+      precision: 3); //before
 
   SharedPreferences sharedPreferences;
 
