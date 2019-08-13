@@ -246,7 +246,7 @@ class _LoginPageState extends State<LoginPage> {
                         .number, // Use email input type for emails.
                     decoration: new InputDecoration(
                         hintText: 'Current fuel price per liter',
-                        labelText: 'Fuel price per liter',
+                        labelText: 'Fuel price',
                       fillColor: Colors.white,
                       border: new OutlineInputBorder(
                         borderRadius: new BorderRadius.circular(25.0),
