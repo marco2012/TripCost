@@ -163,16 +163,18 @@ class _LoginPageState extends State<LoginPage> {
 
         ),
       body: new Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [
-                    Color(0xFF1b1e44),
-                    Color(0xFF2d3447),
-                  ],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  tileMode: TileMode.clamp)),
-          padding: new EdgeInsets.all(20.0),
+//          decoration: BoxDecoration(
+//              gradient: LinearGradient(
+//                  colors: [
+//                    Color(0xFF1b1e44),
+//                    Color(0xFF2d3447),
+//                  ],
+//                  begin: Alignment.bottomCenter,
+//                  end: Alignment.topCenter,
+//                  tileMode: TileMode.clamp)),
+      color: Color(0xFF1b1e44),
+
+      padding: new EdgeInsets.all(20.0),
           child: new Form(
             key: this._formKey,
             child: new ListView(
