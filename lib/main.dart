@@ -155,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarColor: defaultColor
     ));
-    
+
     return new Scaffold(
         appBar: AppBar(
             title: Text("TripCost"),
@@ -172,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
 //                  begin: Alignment.bottomCenter,
 //                  end: Alignment.topCenter,
 //                  tileMode: TileMode.clamp)),
-      color: Color(0xFF1b1e44),
+//      color: Color(0xFF1b1e44),
 
       padding: new EdgeInsets.all(20.0),
           child: new Form(
@@ -265,7 +265,6 @@ class _LoginPageState extends State<LoginPage> {
 
                       Text("Roundtrip",
                       style: TextStyle(
-                          color: Colors.white,
                           fontSize: 18.0,
                           letterSpacing: 1.0,
                       )),
